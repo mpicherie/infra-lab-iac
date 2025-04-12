@@ -5,9 +5,6 @@ set -e
 # Local Proxmox Lab Deployment Script
 # -----------------------------------------
 
-# Ask the user for pfSense WAN IP
-read -p "🌐 Enter the static WAN IP for pfSense (e.g. 192.168.0.50): " PFSENSE_WAN_IP
-echo "$PFSENSE_WAN_IP" > ./proxmox_templates/bootstrap/pfsense_wan_ip.txt
 
 # Make sure all necessary scripts are executable
 chmod +x ./proxmox_templates/*.sh
@@ -51,5 +48,5 @@ fi
 
 echo ""
 echo "✅ Lab deployment complete!"
-echo "You can now run:"
-echo "ansible-playbook -i ansible/inventories/hosts.ini ansible/playbooks/test_pfsense_api.yml"
+echo "📌 Please complete the pfSense installation manually via the Proxmox Web UI console"
+

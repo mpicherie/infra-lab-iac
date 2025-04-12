@@ -50,7 +50,7 @@
   --ostype l26 \
   --scsihw virtio-scsi-pci \
   --virtio0 $STORAGE_LVM:8 \
-  --serial0 socket --vga serial0
+
 
 
   qm start $VM_ID
