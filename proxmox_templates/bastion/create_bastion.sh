@@ -58,6 +58,11 @@ echo "✅ Bastion VM created and started (ID $VM_ID)"
 # Wait for VM to finish booting (you can adjust this sleep time)
 sleep 30
 
+echo "📦 Installing UFW..."
+sshpass -p 'your-password' ssh -o StrictHostKeyChecking=no -t root@$(hostname -I | awk '{print $1}') \
+  "apt-get update -y && apt-get install -y ufw"
+
+
 # Enable UFW and allow SSH only
 echo "🔧 Configuring UFW on Bastion VM..."
 sshpass -p 'your-password' ssh -o StrictHostKeyChecking=no -t root@$(hostname -I | awk '{print $1}') \
