@@ -8,9 +8,10 @@ set api_pass "ansible123"
 set lan_ip "192.168.100.1"
 
 # Read WAN IP from file (written by create_vm.sh)
-set f [open "/tmp/pfsense_wan_ip.txt"]
+set f [open "./proxmox_templates/bootstrap/pfsense_wan_ip.txt"]
 gets $f wan_ip
 close $f
+
 
 # Connect to Proxmox VM terminal
 spawn qm terminal $vm_id
