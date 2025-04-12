@@ -44,17 +44,18 @@ create_pfsense_vm() {
 
   # Create the VM
   qm create $VM_ID \
-    --name $VM_NAME \
-    --memory 2048 \
-    --cores 2 \
-    --net0 virtio,bridge=$BRIDGE_WAN \
-    --net1 virtio,bridge=$BRIDGE_LAN \
-    --cdrom $STORAGE:iso/$ISO_NAME \
-    --boot order=cdrom \
-    --ostype l26 \
-    --scsihw virtio-scsi-pci \
-    --virtio0 $STORAGE_LVM:8 \
-    --serial0 socket --vga serial0
+  --name $VM_NAME \
+  --memory 2048 \
+  --cores 2 \
+  --net0 virtio,bridge=$BRIDGE_WAN \
+  --net1 virtio,bridge=$BRIDGE_LAN \
+  --ide2 $STORAGE:iso/$ISO_NAME,media=cdrom \
+  --boot order=ide2 \
+  --ostype l26 \
+  --scsihw virtio-scsi-pci \
+  --virtio0 $STORAGE_LVM:8 \
+  --serial0 socket --vga serial0
+
 
   qm start $VM_ID
   echo "✅ pfSense VM created and started (ID $VM_ID)"
