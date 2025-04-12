@@ -5,7 +5,7 @@ set -e
 # VPN VM Creation Script (WireGuard)
 # ---------------------------------------------------
 
-VM_ID=101
+VM_ID=102
 VM_NAME="vm-vpn-server"
 ISO_URL="https://repo.ialab.dsu.edu/ubuntu-releases/24.10/ubuntu-24.10-live-server-amd64.iso"
 ISO_NAME="ubuntu-24.10-live-server-amd64.iso"

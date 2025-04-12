@@ -18,18 +18,24 @@ chmod +x ./proxmox_templates/bastion/*.sh
 chmod +x ./proxmox_templates/ansible/*.sh
 
 
-if ! command -v expect &> /dev/null; then
-  echo "📦 Installing 'expect'..."
+# --------------------------------------------------------
+# Ensure 'expect' and 'sshpass' are installed (silent install)
+# --------------------------------------------------------
+
+if ! command -v expect &> /dev/null || ! command -v sshpass &> /dev/null; then
+  echo "📦 Installing 'expect' and 'sshpass'..."
+
   if [ -f /etc/debian_version ]; then
     apt-get update -qq >/dev/null 2>&1
-    apt-get install -y -qq expect >/dev/null 2>&1
+    apt-get install -y -qq expect sshpass >/dev/null 2>&1
   elif [ -f /etc/redhat-release ]; then
-    yum install -y expect >/dev/null 2>&1
+    yum install -y expect sshpass >/dev/null 2>&1
   else
-    echo "❌ Unsupported OS. Install 'expect' manually."
+    echo "❌ Unsupported OS. Install 'expect' and 'sshpass' manually."
     exit 1
   fi
 fi
+
 
 # === Run all steps locally ===
 
