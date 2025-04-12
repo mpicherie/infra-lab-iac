@@ -12,7 +12,6 @@ chmod +x ./proxmox_templates/pfsense/*.sh
 chmod +x ./proxmox_templates/vpn/*.sh
 chmod +x ./proxmox_templates/dns_dhcp/*.sh
 chmod +x ./proxmox_templates/ansible/*.sh
-chmod +x ./proxmox_templates/bootstrap/bootstrap_pfsense.expect
 
 
 
@@ -47,6 +46,22 @@ fi
 ./ansible/inventories/generate_inventory.sh
 
 echo ""
-echo "✅ Lab deployment complete!"
-echo "📌 Please complete the pfSense installation manually via the Proxmox Web UI console"
+echo ""
+echo "🎉 All VMs have been created successfully!"
+
+echo ""
+echo "⚠️  Manual installation required for pfSense (vm-pfsense):"
+echo "   1. Open the Proxmox Web UI"
+echo "   2. Select the VM 'vm-pfsense' (ID 100)"
+echo "   3. Open the Console"
+echo "   4. Complete the pfSense installation using the ISO installer"
+echo ""
+echo "💡 Once pfSense is installed and running:"
+echo "   - Enable SSH: System > Advanced > Admin Access"
+echo "   - Install the pfSense API package:"
+echo "       pkg install -y pfSense-pkg-API"
+echo "   - Create an API user (e.g., 'ansible')"
+echo ""
+echo "🚀 After that, you can run Ansible to configure pfSense automatically!"
+
 
