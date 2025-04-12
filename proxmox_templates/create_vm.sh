@@ -42,6 +42,14 @@ create_pfsense_vm() {
     rm -f "$ISO_GZ_PATH"
   fi
 
+   # Delete existing VM if it exists
+  if qm status $VM_ID &> /dev/null; then
+    echo "⚠️  VM ID $VM_ID already exists — deleting it..."
+    qm stop $VM_ID &> /dev/null || true
+    qm destroy $VM_ID --purge
+    echo "🗑️  VM $VM_ID deleted"
+  fi
+
   # Create the VM
   qm create $VM_ID \
   --name $VM_NAME \
