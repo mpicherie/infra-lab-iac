@@ -11,7 +11,7 @@ echo "$PFSENSE_WAN_IP" > ./proxmox_templates/bootstrap/pfsense_wan_ip.txt
 
 # Make sure all necessary scripts are executable
 chmod +x ./proxmox_templates/*.sh
-chmod +x ./proxmox_templates/pfSense/*.sh
+chmod +x ./proxmox_templates/pfsense/*.sh
 chmod +x ./proxmox_templates/vpn/*.sh
 chmod +x ./proxmox_templates/dns_dhcp/*.sh
 chmod +x ./proxmox_templates/bastion/*.sh
