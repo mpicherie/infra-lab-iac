@@ -5,12 +5,13 @@ set -e
 # Remote Proxmox Lab Deployment Script
 # -----------------------------------------
 
-PROXMOX_HOST="192.168.1.10"   # À modifier selon ton setup
+# Ask for Proxmox host IP
+read -p "🔧 Enter the IP address of your Proxmox server: " PROXMOX_HOST
 PROXMOX_USER="root"
 REMOTE_DIR="/root/iac-lab"
 SSH_TARGET="${PROXMOX_USER}@${PROXMOX_HOST}"
 
-# Step 0 - Ensure expect is installed (silent)
+# Ensure 'expect' is installed (silent mode)
 if ! command -v expect &> /dev/null; then
   if [ "$(uname)" = "Linux" ]; then
     if [ -f /etc/debian_version ]; then
@@ -28,23 +29,23 @@ if ! command -v expect &> /dev/null; then
   fi
 fi
 
-# Step 1 - Create working directory on remote Proxmox
+# Create working directory on the remote Proxmox host
 ssh "$SSH_TARGET" "mkdir -p $REMOTE_DIR"
 
-# Step 2 - Upload VM creation script
+# Upload VM creation script
 scp ./proxmox_templates/create_vm.sh "$SSH_TARGET:$REMOTE_DIR/create_vm.sh"
 
-# Step 3 - Upload pfSense bootstrap script
+# Upload pfSense bootstrap script
 scp ./proxmox_templates/bootstrap/bootstrap_pfsense.expect "$SSH_TARGET:$REMOTE_DIR/bootstrap_pfsense.expect"
 
-# Step 4 - Set execute permissions
+# Set execute permissions
 ssh "$SSH_TARGET" "chmod +x $REMOTE_DIR/create_vm.sh $REMOTE_DIR/bootstrap_pfsense.expect"
 
-# Step 5 - Execute VM creation remotely
+# Execute VM creation script on Proxmox
 ssh "$SSH_TARGET" "cd $REMOTE_DIR && ./create_vm.sh"
 
-# Step 6 - Bootstrap pfSense API (from your machine)
+# Execute pfSense bootstrap from local machine (talks to Proxmox VM)
 expect ./proxmox_templates/bootstrap/bootstrap_pfsense.expect
 
-# Step 7 - Generate dynamic inventory
+# Generate the dynamic inventory file
 bash ./ansible/inventories/generate_inventory.sh
