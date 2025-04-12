@@ -15,6 +15,8 @@ chmod +x ./proxmox_templates/pfsense/*.sh
 chmod +x ./proxmox_templates/vpn/*.sh
 chmod +x ./proxmox_templates/dns_dhcp/*.sh
 chmod +x ./proxmox_templates/ansible/*.sh
+chmod +x ./proxmox_templates/bootstrap/bootstrap_pfsense.expect
+
 
 
 # --------------------------------------------------------
