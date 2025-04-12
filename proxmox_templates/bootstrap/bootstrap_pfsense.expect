@@ -1,63 +1,75 @@
 #!/usr/bin/expect -f
 
-set timeout 60
+set timeout 120
 set vm_id 100
 set admin_pass "pfsense"
 set api_user "ansible"
 set api_pass "ansible123"
 set lan_ip "192.168.100.1"
 
-# Read WAN IP from file (written by create_vm.sh)
+# Lire l'IP WAN depuis le fichier généré précédemment
 set f [open "./proxmox_templates/bootstrap/pfsense_wan_ip.txt"]
 gets $f wan_ip
 close $f
 
-
-# Connect to Proxmox VM terminal
+# Lancer la console série Proxmox de la VM pfSense
+send_user "🖥️  Connexion à la console de la VM pfSense (ID $vm_id)...\n"
 spawn qm terminal $vm_id
 
-# Wait for pfSense login
-expect "login:"
-send "admin\r"
+# Attente du prompt de login
+expect {
+    "login:" {}
+    timeout {
+        send_user "❌ Timeout : login prompt non détecté\n"
+        exit 1
+    }
+}
 
+# Connexion en tant qu'admin
+send "admin\r"
 expect "Password:"
 send "$admin_pass\r"
-
-# We're in the pfSense CLI
 expect "#"
 
-# Enable SSH access (optional, but useful)
+# Activer le SSH
+send_user "🔧 Activation du SSH...\n"
 send "pfSsh.php playback enablessh\r"
 expect "#"
 
-# Set static IPs for WAN and LAN
+# Configurer les IP statiques WAN et LAN
+send_user "🌐 Configuration des IPs...\n"
 send "pfSsh.php playback interface static wan $wan_ip 24\r"
 expect "#"
-
 send "pfSsh.php playback interface static lan $lan_ip 24\r"
 expect "#"
 
-# Install pfSense API package
+# Test réseau (facultatif)
+send "ping -c 2 8.8.8.8\r"
+expect "#"
+
+# Installation de l'API pfSense
+send_user "📦 Installation du package pfSense API...\n"
 send "pkg install -y pfSense-pkg-API\r"
 expect {
     "Proceed with this action" {
         send "y\r"
         exp_continue
     }
-    "#" {
-        # done
+    "#" {}
+    timeout {
+        send_user "❌ Timeout pendant l'installation du package\n"
+        exit 1
     }
 }
 
-# Create API user via pfSense CLI
-send "echo 'Creating Ansible user...'\r"
+# Création de l'utilisateur Ansible
+send_user "👤 Création de l'utilisateur $api_user...\n"
 send "echo '$api_pass' | pw useradd $api_user -m -s /bin/sh -h 0\r"
 expect "#"
 send "usermod -G wheel $api_user\r"
 expect "#"
 
-# Optionally: Add webConfigurator group permissions (manual if needed)
-
-# Finish
+# Fin
+send_user "✅ Configuration terminée. Déconnexion...\n"
 send "exit\r"
 expect eof
