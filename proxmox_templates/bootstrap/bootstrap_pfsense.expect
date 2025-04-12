@@ -1,0 +1,62 @@
+#!/usr/bin/expect -f
+
+set timeout 60
+set vm_id 100
+set admin_pass "pfsense"
+set api_user "ansible"
+set api_pass "ansible123"
+set lan_ip "192.168.100.1"
+
+# Read WAN IP from file (written by create_vm.sh)
+set f [open "/tmp/pfsense_wan_ip.txt"]
+gets $f wan_ip
+close $f
+
+# Connect to Proxmox VM terminal
+spawn qm terminal $vm_id
+
+# Wait for pfSense login
+expect "login:"
+send "admin\r"
+
+expect "Password:"
+send "$admin_pass\r"
+
+# We're in the pfSense CLI
+expect "#"
+
+# Enable SSH access (optional, but useful)
+send "pfSsh.php playback enablessh\r"
+expect "#"
+
+# Set static IPs for WAN and LAN
+send "pfSsh.php playback interface static wan $wan_ip 24\r"
+expect "#"
+
+send "pfSsh.php playback interface static lan $lan_ip 24\r"
+expect "#"
+
+# Install pfSense API package
+send "pkg install -y pfSense-pkg-API\r"
+expect {
+    "Proceed with this action" {
+        send "y\r"
+        exp_continue
+    }
+    "#" {
+        # done
+    }
+}
+
+# Create API user via pfSense CLI
+send "echo 'Creating Ansible user...'\r"
+send "echo '$api_pass' | pw useradd $api_user -m -s /bin/sh -h 0\r"
+expect "#"
+send "usermod -G wheel $api_user\r"
+expect "#"
+
+# Optionally: Add webConfigurator group permissions (manual if needed)
+
+# Finish
+send "exit\r"
+expect eof
